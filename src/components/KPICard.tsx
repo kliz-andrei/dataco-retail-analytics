@@ -1,0 +1,2 @@
+import type { LucideIcon } from 'lucide-react'
+export function KPICard({label,value,detail,trend,Icon}:{label:string;value:string;detail:string;trend?:number;Icon:LucideIcon}){const direction=trend==null?'':trend>0?'up':trend<0?'down':'flat';return <article className="kpi"><span className="kpi-icon"><Icon size={18}/></span><div><p>{label}</p><strong>{value}</strong><small>{trend==null?detail:<><em className={`trend ${direction}`}>{trend>0?'↑':trend<0?'↓':'→'} {Math.abs(trend*100).toFixed(1)}%</em> vs previous year</>}</small></div></article>}
