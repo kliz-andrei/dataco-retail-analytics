@@ -1,2 +1,3 @@
 import type { ReactNode } from 'react'
-export function ChartCard({title,children,className=''}:{title:string;children:ReactNode;className?:string}){return <article className={`chart-card ${className}`}><h3>{title}</h3>{children}</article>}
+const toneFor=(title:string)=>{const value=title.toLowerCase();if(/sales.*profit|revenue.*profit/.test(value))return 'sales';if(/margin/.test(value))return 'margin';if(/profit/.test(value))return 'profit';if(/customer|segment/.test(value))return 'customer';if(/order/.test(value))return 'orders';if(/delivery|shipping|risk/.test(value))return 'risk';if(/discount|average order value|aov/.test(value))return 'financial';return 'sales'}
+export function ChartCard({title,children,className=''}:{title:string;children:ReactNode;className?:string}){const tone=toneFor(title);return <article className={`chart-card chart-${tone} ${className}`}><h3><i aria-hidden="true"/>{title}</h3>{children}</article>}
