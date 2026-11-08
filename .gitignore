@@ -5,3 +5,11 @@ dist/
 .DS_Store
 *.log
 *.tsbuildinfo
+.venv-ml/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+artifacts/
+prepared_late_delivery_orders.csv
+notebooks/*_Executed.ipynb
+*.joblib

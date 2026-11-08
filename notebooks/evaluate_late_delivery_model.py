@@ -1,0 +1,8 @@
+import json,joblib,pandas as pd
+from pathlib import Path
+from sklearn.inspection import permutation_importance
+from sklearn.metrics import brier_score_loss,log_loss,roc_auc_score
+from sklearn.calibration import calibration_curve
+df=pd.read_csv('prepared_late_delivery_orders.csv',parse_dates=['order_date']).sort_values(['order_date','Order Id'],kind='stable').reset_index(drop=True); n=len(df);v=df.iloc[int(n*.7):int(n*.85)]
+f=['shipping_mode','market','region','country','customer_segment','category','quantity','order_value','order_month']; y=v.late_delivery; pipe=joblib.load('artifacts/late_delivery_v1/pipeline.joblib'); p=pipe.predict_proba(v[f])[:,1]
+out=Path('artifacts/late_delivery_v3');out.mkdir(parents=True,exist_ok=True); imp=permutation_importance(pipe,v[f],y,scoring='roc_auc',n_repeats=3,random_state=42,n_jobs=-1); rank=pd.DataFrame({'feature':f,'importance_mean':imp.importances_mean,'importance_std':imp.importances_std}).sort_values('importance_mean',ascending=False);rank.to_csv(out/'permutation_importance.csv',index=False); frac,mean=calibration_curve(y,p,n_bins=10,strategy='quantile');pd.DataFrame({'mean_predicted_probability':mean,'observed_late_rate':frac}).to_csv(out/'calibration_curve.csv',index=False);meta={'calibration':'uncalibrated random forest retained; no temporally separate calibration partition was reserved','brier_score':brier_score_loss(y,p),'log_loss':log_loss(y,p),'roc_auc':roc_auc_score(y,p),'threshold':.5,'policy':'validation F1 subject to precision >=0.70 and alert rate 10%-70%'};(out/'calibration_metadata.json').write_text(json.dumps(meta,indent=2));print(json.dumps({'meta':meta,'importance':rank.to_dict('records')},indent=2))
