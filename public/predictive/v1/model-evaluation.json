@@ -1,0 +1,108 @@
+{
+  "model": "Random Forest",
+  "modelVersion": "late_delivery_v1",
+  "predictionTarget": "Late_delivery_risk for completed orders",
+  "threshold": 0.5,
+  "unitOfAnalysis": "Unique order",
+  "status": "Research prototype \u2014 historical evaluation only",
+  "evaluationPeriod": "2017-09-05 to 2018-01-31",
+  "records": 9435,
+  "testMetrics": {
+    "accuracy": 0.6980392156862745,
+    "precision": 0.8380503144654088,
+    "recall": 0.5890587585190643,
+    "f1": 0.6918334234721472,
+    "rocAuc": 0.7461796575720321,
+    "averagePrecision": 0.838186942674026
+  },
+  "confusionMatrix": {
+    "tn": 3388,
+    "fp": 618,
+    "fn": 2231,
+    "tp": 3198
+  },
+  "modelComparison": [
+    {
+      "model": "dummy",
+      "accuracy": 0.570217276099629,
+      "precision": 0.570217276099629,
+      "recall": 1.0,
+      "f1": 0.7262909213634829,
+      "roc_auc": 0.5,
+      "average_precision": 0.570217276099629
+    },
+    {
+      "model": "logistic",
+      "accuracy": 0.6930577636459989,
+      "precision": 0.8389737991266376,
+      "recall": 0.5713754646840149,
+      "f1": 0.6797877045555064,
+      "roc_auc": 0.739519272640597,
+      "average_precision": 0.8317404462007376
+    },
+    {
+      "model": "tree",
+      "accuracy": 0.6892421833598305,
+      "precision": 0.8324280282455188,
+      "recall": 0.5697026022304833,
+      "f1": 0.6764511145442507,
+      "roc_auc": 0.7370796529137005,
+      "average_precision": 0.807920098195637
+    },
+    {
+      "model": "forest",
+      "accuracy": 0.6975092739798622,
+      "precision": 0.8270326255825997,
+      "recall": 0.5936802973977695,
+      "f1": 0.6911923826011686,
+      "roc_auc": 0.7436568511956876,
+      "average_precision": 0.8338642630376911
+    }
+  ],
+  "featureImportance": [
+    {
+      "feature": "shipping_mode",
+      "importance": 0.240696899967455
+    },
+    {
+      "feature": "country",
+      "importance": 0.0016868889204662747
+    },
+    {
+      "feature": "region",
+      "importance": 0.001554286858056216
+    },
+    {
+      "feature": "category",
+      "importance": 0.0012295008075150122
+    },
+    {
+      "feature": "quantity",
+      "importance": 0.0008366374983383995
+    },
+    {
+      "feature": "market",
+      "importance": -2.514985247766462e-05
+    },
+    {
+      "feature": "order_month",
+      "importance": -3.8916570024564536e-05
+    },
+    {
+      "feature": "customer_segment",
+      "importance": -0.0004248583219884268
+    },
+    {
+      "feature": "order_value",
+      "importance": -0.0009979800665263678
+    }
+  ],
+  "limitations": [
+    "Historical evaluation only; no real-time prediction service.",
+    "Not production-validated.",
+    "Shipping mode supplies almost all observed discrimination; this is not causal.",
+    "Test period was previously accessed during development.",
+    "Probabilities are uncalibrated.",
+    "Threshold 0.50 was selected under provisional validation precision and alert-rate constraints."
+  ]
+}
