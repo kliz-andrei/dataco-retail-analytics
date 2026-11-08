@@ -14,7 +14,44 @@ PUBLIC.mkdir(parents=True, exist_ok=True)
 
 with (ARTIFACTS / 'late_delivery_v1' / 'test_predictions.csv').open(newline='', encoding='utf-8') as stream:
     source = list(csv.DictReader(stream))
-predictions = [{'orderId': row['Order Id'], 'actual': int(row['actual']), 'probability': round(float(row['probability']), 8), 'predicted': int(float(row['probability']) >= .5)} for row in source]
+
+# These are historical order attributes already prepared for the approved
+# modelling dataset.  They provide UI context only: the browser never scores
+# an order or changes the trained model.
+context_fields = {
+    'shipping_mode': 'shippingMode',
+    'market': 'market',
+    'region': 'region',
+    'country': 'country',
+    'customer_segment': 'customerSegment',
+    'category': 'category',
+    'quantity': 'quantity',
+    'order_value': 'orderValue',
+    'order_date': 'orderDate',
+}
+order_context = {}
+with (ROOT / 'prepared_late_delivery_orders.csv').open(newline='', encoding='utf-8') as stream:
+    for row in csv.DictReader(stream):
+        order_context[str(row['Order Id'])] = {
+            output: row[source] for source, output in context_fields.items()
+        }
+
+predictions = []
+for row in source:
+    order_id = str(row['Order Id'])
+    context = order_context.get(order_id)
+    if context is None:
+        raise ValueError(f'Missing prepared order context for prediction {order_id}.')
+    predictions.append({
+        'orderId': order_id,
+        'actual': int(row['actual']),
+        'probability': round(float(row['probability']), 8),
+        # Retained as the original operating-policy label for reference. The
+        # interactive UI always derives simulation classifications from
+        # probability and its user-selected retrospective threshold.
+        'predicted': int(float(row['probability']) >= .5),
+        **context,
+    })
 y = [row['actual'] for row in predictions]
 p = [row['probability'] for row in predictions]
 z = [row['predicted'] for row in predictions]
