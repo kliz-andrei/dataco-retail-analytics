@@ -1,0 +1,86 @@
+{
+  "features": [
+    "shipping_mode",
+    "market",
+    "region",
+    "country",
+    "customer_segment",
+    "category",
+    "quantity",
+    "order_value",
+    "order_month"
+  ],
+  "selected_model": "forest",
+  "threshold": 0.5,
+  "splits": {
+    "train": {
+      "rows": 44027,
+      "late_rate": 0.5732618620392033,
+      "start": "2015-01-01",
+      "end": "2017-03-16"
+    },
+    "validation": {
+      "rows": 9435,
+      "late_rate": 0.570217276099629,
+      "start": "2017-03-16",
+      "end": "2017-09-05"
+    },
+    "test": {
+      "rows": 9435,
+      "late_rate": 0.5754107048224695,
+      "start": "2017-09-05",
+      "end": "2018-01-31"
+    }
+  },
+  "validation": [
+    {
+      "model": "dummy",
+      "accuracy": 0.570217276099629,
+      "precision": 0.570217276099629,
+      "recall": 1.0,
+      "f1": 0.7262909213634829,
+      "roc_auc": 0.5,
+      "average_precision": 0.570217276099629
+    },
+    {
+      "model": "logistic",
+      "accuracy": 0.6930577636459989,
+      "precision": 0.8389737991266376,
+      "recall": 0.5713754646840149,
+      "f1": 0.6797877045555064,
+      "roc_auc": 0.739519272640597,
+      "average_precision": 0.8317404462007376
+    },
+    {
+      "model": "tree",
+      "accuracy": 0.6892421833598305,
+      "precision": 0.8324280282455188,
+      "recall": 0.5697026022304833,
+      "f1": 0.6764511145442507,
+      "roc_auc": 0.7370796529137005,
+      "average_precision": 0.807920098195637
+    },
+    {
+      "model": "forest",
+      "accuracy": 0.6975092739798622,
+      "precision": 0.8270326255825997,
+      "recall": 0.5936802973977695,
+      "f1": 0.6911923826011686,
+      "roc_auc": 0.7436568511956876,
+      "average_precision": 0.8338642630376911
+    }
+  ],
+  "test": {
+    "accuracy": 0.6980392156862745,
+    "precision": 0.8380503144654088,
+    "recall": 0.5890587585190643,
+    "f1": 0.6918334234721472,
+    "roc_auc": 0.7461796575720321,
+    "average_precision": 0.838186942674026,
+    "tn": 3388,
+    "fp": 618,
+    "fn": 2231,
+    "tp": 3198,
+    "alert_rate": 0.4044515103338633
+  }
+}
