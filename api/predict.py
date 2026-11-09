@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 import joblib
-import pandas as pd
+import numpy as np
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
@@ -59,7 +59,27 @@ class PredictionRequest(BaseModel):
 def load_pipeline() -> Any:
     if not MODEL_PATH.is_file():
         raise RuntimeError("The verified late-delivery pipeline is not packaged with this deployment.")
-    return joblib.load(MODEL_PATH)
+    pipeline = joblib.load(MODEL_PATH)
+    # The fitted pipeline was trained with named pandas columns.  Vercel's
+    # function-size limit makes pandas unnecessarily expensive at runtime, so
+    # preserve the same fitted transformers while switching their selectors to
+    # the equivalent positional indices.  This is an inference-only adapter;
+    # the serialized model and its learned parameters are not changed.
+    preprocess = pipeline.named_steps["preprocess"]
+    positional_columns = {
+        "cat": list(range(len(CATEGORICAL_FEATURES))),
+        "num": list(range(len(CATEGORICAL_FEATURES), len(FEATURES))),
+    }
+    preprocess.transformers = [
+        (name, transformer, positional_columns.get(name, columns))
+        for name, transformer, columns in preprocess.transformers
+    ]
+    preprocess.transformers_ = [
+        (name, transformer, positional_columns.get(name, columns))
+        for name, transformer, columns in preprocess.transformers_
+    ]
+    preprocess._transformer_to_input_indices = positional_columns
+    return pipeline
 
 
 @lru_cache(maxsize=1)
@@ -112,7 +132,7 @@ def run_prediction(payload: PredictionRequest) -> dict[str, Any]:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     _validate_values(payload, pipeline)
-    frame = pd.DataFrame([{feature: getattr(payload, feature) for feature in FEATURES}], columns=FEATURES)
+    frame = np.asarray([[getattr(payload, feature) for feature in FEATURES]], dtype=object)
     probabilities = pipeline.predict_proba(frame)
     classes = list(pipeline.named_steps["model"].classes_)
     positive_index = classes.index(1)
