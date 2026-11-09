@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**/*.py": {
-      "excludeFiles": "{**/*.csv,public/**,dist/**,node_modules/**,src/**,docs/**,notebooks/**,submission/**,tests/**,**/*.ipynb,artifacts/late_delivery_v2/**,artifacts/late_delivery_v3/**,artifacts/late_delivery_v1/test_predictions.csv,artifacts/late_delivery_v1/validation_comparison.csv,.codex-ppt-build/**,.chart-data-*/**}"
+    "api/index.py": {
+      "excludeFiles": "{**/*.csv,public/**,dist/**,src/**,docs/**,notebooks/**,submission/**,tests/**,**/*.ipynb,artifacts/late_delivery_v2/**,artifacts/late_delivery_v3/**,artifacts/late_delivery_v1/test_predictions.csv,artifacts/late_delivery_v1/validation_comparison.csv}"
     }
   }
 }
