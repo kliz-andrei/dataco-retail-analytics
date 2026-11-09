@@ -10,6 +10,11 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 artifacts/
+!artifacts/
+!artifacts/late_delivery_v1/
 prepared_late_delivery_orders.csv
 notebooks/*_Executed.ipynb
 *.joblib
+artifacts/late_delivery_v1/*
+!artifacts/late_delivery_v1/pipeline.joblib
+!artifacts/late_delivery_v1/metadata.json

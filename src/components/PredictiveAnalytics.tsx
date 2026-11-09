@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { AlertTriangle, BrainCircuit, ChevronLeft, ChevronRight, CircleCheck, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-react'
 import { ChartCard } from './ChartCard'
+import { LateDeliveryEstimator } from './LateDeliveryEstimator'
 import { displayCountryName } from '../utils/countryNames'
 import { number, pct } from '../utils/formatting'
 import {
@@ -140,13 +141,15 @@ export function PredictiveAnalytics() {
     setDetail(null)
   }
 
-  if (error) return <section id="predictive-analytics" className="predictive-page"><h2>Predictive Analytics</h2><div className="predictive-error"><AlertTriangle size={18} /><div><strong>Historical prediction data unavailable</strong><p>{error} This page does not generate browser-side predictions.</p></div></div></section>
+  if (error) return <section id="predictive-analytics" className="predictive-page"><h2>Predictive Analytics</h2><div className="predictive-error"><AlertTriangle size={18} /><div><strong>Historical prediction data unavailable</strong><p>{error} Interactive inference is provided separately through the server-side estimator.</p></div></div><LateDeliveryEstimator /></section>
   if (!metadata) return <section id="predictive-analytics" className="predictive-page"><h2>Predictive Analytics</h2><p className="predictive-loading">Loading verified historical model evaluation…</p></section>
 
   return <section id="predictive-analytics" className="predictive-page">
     <div className="predictive-heading"><div><span>Research prototype · historical evaluation</span><h2>Predictive Intelligence</h2><p>Interact with saved Random Forest test-period results. Retail dashboard global filters remain independent of this full-period historical evaluation.</p></div><div className="prototype-badge"><BrainCircuit size={18} /><span>{metadata.status}</span></div></div>
     <div className="predictive-overview"><Info label="Model" value={metadata.model} note={metadata.modelVersion} /><Info label="Prediction target" value={metadata.predictionTarget} note={metadata.unitOfAnalysis} /><Info label="Operating threshold" value={metadata.threshold.toFixed(2)} note="Fixed historical policy" /><Info label="Evaluation period" value={metadata.evaluationPeriod} note={`${number(metadata.records)} historical orders`} /></div>
     <h3 className="predictive-section-title">Historical test-period performance</h3><p className="predictive-note">These fixed, saved metrics describe the held-out historical period—not live production performance.</p><div className="predictive-metrics"><Fixed label="ROC-AUC" value={metadata.testMetrics.rocAuc.toFixed(4)} /><Fixed label="Precision" value={pct(metadata.testMetrics.precision)} /><Fixed label="Recall" value={pct(metadata.testMetrics.recall)} /><Fixed label="F1-score" value={pct(metadata.testMetrics.f1)} /></div>
+
+    <LateDeliveryEstimator />
 
     <ChartCard title="Decision Threshold Simulator"><div className="threshold-simulator"><div><span className="eyebrow">Retrospective what-if analysis</span><h3>Explore the classification policy without retraining</h3><p>Saved probabilities are reclassified in the browser. This does not alter the official 0.50 threshold, model metadata, or validation evidence.</p></div><div className="threshold-control"><div><label htmlFor="prediction-threshold">Simulated threshold <strong>{threshold.toFixed(2)}</strong></label><button className="subtle-button" onClick={() => setThreshold(DEFAULT_PREDICTION_THRESHOLD)} disabled={threshold === DEFAULT_PREDICTION_THRESHOLD}><RotateCcw size={14} /> Reset to 0.50</button></div><input id="prediction-threshold" type="range" min="0.05" max="0.95" step="0.01" value={threshold} onChange={event => setThreshold(Number(event.target.value))} /><div className="range-labels"><span>0.05 · more alerts</span><span>0.95 · fewer alerts</span></div></div></div><div className="simulator-metrics"><Sim label="Flagged orders" value={number(metrics.flagged)} note={`${pct(metrics.alertRate)} alert rate`} /><Sim label="Precision" value={pct(metrics.precision)} /><Sim label="Recall" value={pct(metrics.recall)} /><Sim label="F1-score" value={pct(metrics.f1)} /><Sim label="Specificity" value={pct(metrics.specificity)} /></div></ChartCard>
 
